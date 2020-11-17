@@ -1,8 +1,8 @@
-""" Main class for HW09 """
+""" Main class for HW10 """
 
 from collections import defaultdict, OrderedDict
 from os import error, name
-from typing import Dict, Iterator, List, Tuple
+from typing import Any, Dict, Iterator, List, Tuple
 from prettytable import PrettyTable
 import os
 
@@ -10,7 +10,7 @@ class Student:
     """ Class representing a student in University """
 
     def __init__(self, cwid : str, name : str, major : "Major",university : "University") -> None:
-        """ Constructor """
+        """ Constructor for Student class """
         self.cwid : str = cwid
         self.name : str = name
         self.major : "Major" = major
@@ -24,6 +24,7 @@ class Student:
         self.calculate_gpa()
     
     def calculate_gpa(self) -> None:
+        """ Calculates the GPA of the student and updates the global parameter """
         gpa_scale : Dict[str,float] = self.university.gpa_scale
         sum : float = 0.0
         for key,value in self.courses.items():
@@ -31,21 +32,23 @@ class Student:
         self.gpa = sum / len(self.courses)
     
     def get_completed_courses(self) -> List[str] :
-        """ return a list of completed courses """
+        """ Return a list of completed courses """
         return sorted([key for key, val in self.courses.items() if val not in self.university.failing_grade])
     
     def get_remaining_req_courses(self) -> List[str] :
+        """ Return a list of remaining required courses """
         return sorted([course for course in self.major.required_courses if course not in self.courses or self.courses[course] in self.university.failing_grade])
     
     
     def get_remaining_ele_courses(self) -> List[str] :
+        """ Return a list of remaining elective courses """
         for course in self.major.elective_courses:
             if course in self.courses and self.courses[course] not in self.university.failing_grade:
                 return []
         return sorted(list(self.major.elective_courses))
 
-    def table_row(self):
-        """ Returns a List os all attibutes for printing """
+    def table_row(self) -> List[Any]:
+        """ Returns a list of attributes for a table row """
         return [self.cwid, self.name, self.major.name, self.get_completed_courses(), self.get_remaining_req_courses(), self.get_remaining_ele_courses(), float("{:.2f}".format(self.gpa))]
 
 class Instructor:
@@ -53,17 +56,17 @@ class Instructor:
 
     def __init__(self, cwid : str, name : str, department : str, university : "University") -> None:
         """ Constructor """
-        self.cwid = cwid
-        self.name = name
-        self.department = department
-        self.courses = defaultdict(set)
-        self.university = university
+        self.cwid : str = cwid
+        self.name : str = name
+        self.department : str = department
+        self.courses : Dict[str, set[str] ] = defaultdict(set)
+        self.university : "University" = university
     
-    def add_course(self, course_name, student_id):
+    def add_course(self, course_name, student_id) -> None:
         """ Adds a course to the Instructor """
         self.courses[course_name].add(student_id)
     
-    def table_rows(self):
+    def table_rows(self) -> List[Any]:
         """ Returns a List os all attibutes for printing """
         for course, students in self.courses.items():
             yield [self.cwid, self.name, self.department, course, len(students)]
@@ -71,9 +74,9 @@ class Instructor:
 class Major:
     """ Class representing a Major"""
 
-    def __init__(self,name):
+    def __init__(self,name : str) -> None:
         """ Creates a major object """
-        self.name = name
+        self.name : str = name
         self.required_courses : set[int] = set([])
         self.elective_courses : set[int] = set([])
     
@@ -101,7 +104,7 @@ class University:
 
     def __init__(self, name : str) -> None:
         """ Constructor """
-        self.name = name
+        self.name : str = name
         self.students : Dict[str : Student] = {}
         self.instructors : Dict[str : Instructor] = {}
         self.majors : Dict[str : Major] = {}

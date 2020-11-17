@@ -9,26 +9,21 @@ class HW09Test(unittest.TestCase):
     def test_stevens(self):
         "Test for stevens"
         univs : Universities = Universities.get_instance()
-        univs.add_university("Stevens","C:\Stevens\Sem 3\SSW - 810\Assignments\HW09_kishan_Huliyar_jagadeesh\Stevens")
+        univs.add_university("Stevens","C:\Stevens\Sem 3\SSW - 810\Assignments\git\Student-Repository\Stevens")
         stevens : University = univs.universities["Stevens"]
+
         self.assertEqual(stevens.students["10103"].name,"Baldwin, C")
-        self.assertEqual(stevens.students["11788"].major,"SYEN")
+        self.assertEqual(stevens.students["11788"].major.name,"SYEN")
+        self.assertEqual(stevens.students["11461"].gpa,3.9166666666666665)
+        self.assertEqual(stevens.students["10172"].get_remaining_req_courses(),['SSW 540', 'SSW 564'])
+        self.assertEqual(stevens.students["11658"].get_remaining_ele_courses(),['SSW 540', 'SSW 565', 'SSW 810'])
+        self.assertEqual(stevens.students["10115"].get_completed_courses(),['CS 545', 'SSW 564', 'SSW 567', 'SSW 687'])
+
         self.assertEqual(stevens.instructors["98765"].name,"Einstein, A")
         self.assertEqual(stevens.instructors["98760"].department,"SYEN")
+
         self.assertEqual(len(stevens.students["10115"].courses),4)
         self.assertEqual(sorted([key for key in stevens.students["10115"].courses]),['CS 545', 'SSW 564', 'SSW 567', 'SSW 687'])
 
-    def test_NYU(self):
-        "Test for nyu"
-        univs : Universities = Universities.get_instance()
-        univs.add_university("Stevens","C:\Stevens\Sem 3\SSW - 810\Assignments\HW09_kishan_Huliyar_jagadeesh\\nyu")
-        nyu : University = univs.universities["Stevens"]
-        self.assertEqual(nyu.students["10103"].name,"Baldwin, C")
-        self.assertEqual(nyu.students["11788"].major,"SYEN")
-        self.assertEqual(nyu.instructors["98765"].name,"Einstein, A")
-        self.assertEqual(nyu.instructors["98760"].department,"SYEN")
-        self.assertEqual(len(nyu.students["10115"].courses),4)
-        self.assertEqual(sorted([key for key in nyu.students["10115"].courses]),['CS 545', 'SSW 564', 'SSW 567', 'SSW 687'])
-
 if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    unittest.main(verbosity=0)

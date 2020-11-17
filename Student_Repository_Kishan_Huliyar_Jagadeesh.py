@@ -1,7 +1,6 @@
 """ Main class for HW10 """
 
 from collections import defaultdict, OrderedDict
-from os import error, name
 from typing import Any, Dict, Iterator, List, Tuple
 from prettytable import PrettyTable
 import os

@@ -4,6 +4,7 @@ from collections import defaultdict, OrderedDict
 from typing import Any, Dict, Iterator, List, Tuple
 from prettytable import PrettyTable
 import os
+import sqlite3
 
 class Student:
     """ Class representing a student in University """
@@ -138,6 +139,19 @@ class University:
         for major in self.majors.values():
             pt.add_row(major.table_row())
         print(pt)
+    
+    def student_grades_table_db(self, db_path):
+        """Student- grade table from database"""
+        db_con = sqlite3.connect(db_path)
+    
+        p = PrettyTable(
+            field_names=[ 'Name','CWID', 'Course', 'Grade', 'Instructor'])
+        
+        q = """select s.Name,s.CWID,g.Grade,g.Course,i.Name from HW11_grades as g left join HW11_students as s on s.CWID = g.Student_CWID left join HW11_instructors as i on i.CWID=g.Instructor_CWID  order by s.Name asc;"""
+        for row in db_con.execute(q):
+            p.add_row(row)
+        print("Student Grade summary")
+        print(p)
 
 
 class Universities:
@@ -203,13 +217,13 @@ class Universities:
                     
         for file in os.listdir(directory):
             if file.endswith("students.txt"):
-                for cwid, name, major, line_number in self.file_reader(os.path.join(directory,file), 3, self.process_errors,";",True):
+                for cwid, name, major, line_number in self.file_reader(os.path.join(directory,file), 3, self.process_errors,"\t",True):
                     if cwid in university.students:
                         self.process_errors.append(f"Error in Student.txt:{line_number} - Student with cwid {cwid} already exist")
                         continue
                     university.students[cwid] = Student(cwid,name,university.majors[major],university)
             elif file.endswith("instructors.txt"):
-                for cwid, name, dept, line_number in self.file_reader(os.path.join(directory,file), 3, self.process_errors, "|", True):
+                for cwid, name, dept, line_number in self.file_reader(os.path.join(directory,file), 3, self.process_errors, "\t", True):
                     if cwid in university.instructors:
                         self.process_errors.append(f"Error in instrtuctors.txt:{line_number} - Instructor with cwid {cwid} already exist")
                         continue
@@ -217,7 +231,7 @@ class Universities:
 
         for file in os.listdir(directory):
             if file.endswith("grades.txt"):
-                for student_cwid, course, grade, instructor_cwid,line_number in self.file_reader(os.path.join(directory,file), 4, self.process_errors, "|", True):
+                for student_cwid, course, grade, instructor_cwid,line_number in self.file_reader(os.path.join(directory,file), 4, self.process_errors, "\t", True):
                     
                     if instructor_cwid not in university.instructors:
                         self.process_errors.append(f"Error in grades.txt:{line_number} - Instructor with cwid {instructor_cwid} doesnot exist")
@@ -239,7 +253,7 @@ class Universities:
         new_university = University(university_name)
         self.__process_directory(directory, new_university)
         self.universities[university_name] = new_university
-        
+    
 
 if __name__ == "__main__":
     univs = Universities.get_instance()
@@ -249,6 +263,7 @@ if __name__ == "__main__":
     stevens.major_table()
     stevens.student_table()
     stevens.instructor_table()
+    stevens.student_grades_table_db('C:\Stevens\Sem 3\SSW - 810\Assignments\git\Student-Repository\HW11_startup.db')
 
     # univs.add_university("NYU","C:\Stevens\Sem 3\SSW - 810\Assignments\HW09_kishan_Huliyar_jagadeesh\Stevens")
     # nyu = univs.universities["NYU"]

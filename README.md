@@ -15,3 +15,7 @@ repository for SSW-810 assignments
 ### Output table for Instructors
 
 ![Majors](/img/instructors.PNG)
+
+### Output table for grades from the database
+
+![Majors](/img/grades_Db.PNG)
